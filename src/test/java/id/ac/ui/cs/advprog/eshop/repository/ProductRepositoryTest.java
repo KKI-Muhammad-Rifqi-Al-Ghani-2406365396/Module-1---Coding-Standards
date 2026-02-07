@@ -65,4 +65,57 @@ class ProductRepositoryTest {
         assertEquals(product2.getProductId(), savedProduct.getProductId());
         assertFalse(productIterator.hasNext());
     }
+
+    @Test
+    void deleteById_shouldRemoveProduct_whenIdExists() {
+        Product product = new Product();
+        product.setProductId("A");
+        product.setProductName("Sampo");
+        product.setProductQuantity(10);
+
+        productRepository.create(product);
+
+        productRepository.deleteById("A");
+
+        assertTrue(productRepository.findById("A").isEmpty());
+    }
+
+    @Test
+    void deleteById_shouldDoNothing_whenIdDoesNotExist() {
+        Product product = new Product();
+        product.setProductId("A");
+        product.setProductName("Sampo");
+        product.setProductQuantity(10);
+
+        productRepository.create(product);
+
+        productRepository.deleteById("NOT_EXIST");
+
+        // Still exists
+        assertTrue(productRepository.findById("A").isPresent());
+    }
+
+    @Test
+    void updateFields_shouldUpdateProduct_whenIdExists() {
+        Product product = new Product();
+        product.setProductId("A");
+        product.setProductName("OldName");
+        product.setProductQuantity(10);
+
+        productRepository.create(product);
+
+        Product updated = productRepository.updateFields("A", "NewName", 999);
+
+        assertEquals("A", updated.getProductId());
+        assertEquals("NewName", updated.getProductName());
+        assertEquals(999, updated.getProductQuantity());
+    }
+
+    @Test
+    void updateFields_shouldThrow_whenIdDoesNotExist() {
+        assertThrows(IllegalArgumentException.class, () ->
+                productRepository.updateFields("NOT_EXIST", "NewName", 999)
+        );
+    }
+
 }
