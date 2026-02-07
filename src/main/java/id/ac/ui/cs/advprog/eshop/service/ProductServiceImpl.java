@@ -32,8 +32,21 @@ public class ProductServiceImpl implements ProductService {
         return allProduct;
     }
 
+    @Override
     public void deleteById(String productID) {
         productRepository.deleteById(productID);
     }
+    @Override
+    public Product findById(String productID) {
+        return productRepository.findById(productID)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productID));
+    }
+
+    @Override
+    public Product update(String productID, String newName, int newQty) {
+        return productRepository.updateFields(productID, newName, newQty);
+    }
+
+
 
 }
