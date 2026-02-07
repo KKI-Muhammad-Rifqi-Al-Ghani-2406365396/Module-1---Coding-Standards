@@ -17,8 +17,8 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product create(Product product) {
-        if (product.getProductID() == null || product.getProductID().isBlank()) {
-            product.setProductID(UUID.randomUUID().toString());
+        if (product.getProductId() == null || product.getProductId().isBlank()) {
+            product.setProductId(UUID.randomUUID().toString());
         }
         productRepository.create(product);
         return product;
@@ -33,18 +33,18 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void deleteById(String productID) {
-        productRepository.deleteById(productID);
+    public void deleteById(String productId) {
+        productRepository.deleteById(productId);
     }
     @Override
-    public Product findById(String productID) {
-        return productRepository.findById(productID)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productID));
+    public Product findById(String productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
     }
 
     @Override
-    public Product update(String productID, String newName, int newQty) {
-        return productRepository.updateFields(productID, newName, newQty);
+    public Product update(String productId, String newName, int newQty) {
+        return productRepository.updateFields(productId, newName, newQty);
     }
 
 
