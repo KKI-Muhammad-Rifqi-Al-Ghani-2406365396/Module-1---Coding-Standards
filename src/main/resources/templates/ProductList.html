@@ -26,13 +26,13 @@
 
             <td>
                 <!-- EDIT BUTTON -->
-                <a th:href="@{/product/edit/{id}(id=${product.productID})}"
+                <a th:href="@{/product/edit/{id}(id=${product.productId})}"
                    class="btn btn-warning btn-sm">
                     Edit
                 </a>
 
                 <!-- DELETE BUTTON -->
-                <form th:action="@{/product/delete/{id}(id=${product.productID})}"
+                <form th:action="@{/product/delete/{id}(id=${product.productId})}"
                       method="post"
                       style="display:inline;">
                     <button type="submit"
