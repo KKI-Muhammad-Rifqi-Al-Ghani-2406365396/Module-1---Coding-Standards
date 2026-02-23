@@ -1,8 +1,9 @@
 plugins {
     java
     jacoco
-    id("org.springframework.boot") version "4.0.2"
-    id("io.spring.dependency-management") version "1.1.7"
+    pmd
+    id("org.springframework.boot") version "3.2.2"
+    id("io.spring.dependency-management") version "1.1.4"
 }
 
 group = "id.ac.ui.cs.advprog"
@@ -88,5 +89,23 @@ tasks.jacocoTestReport {
         xml.required.set(true)
         html.required.set(true)
         csv.required.set(false)
+    }
+}
+
+pmd {
+    toolVersion = "7.0.0-rc4"
+    isConsoleOutput = true
+    rulesMinimumPriority = 5
+}
+
+tasks.withType<Pmd>().configureEach {
+    ruleSets = listOf(
+        "category/java/bestpractices.xml",
+        "category/java/codestyle.xml",
+        "category/java/errorprone.xml"
+    )
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
     }
 }
