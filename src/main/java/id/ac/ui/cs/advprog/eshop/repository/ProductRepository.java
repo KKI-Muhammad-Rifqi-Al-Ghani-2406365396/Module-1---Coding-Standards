@@ -22,21 +22,21 @@ public class ProductRepository {
         return productData.iterator();
     }
 
-    public void deleteById(String productID) {
-        productData.removeIf(p -> p.getProductID() != null && p.getProductID().equals(productID));
+    public void deleteById(String productId) {
+        productData.removeIf(p ->
+                p.getProductId() != null && p.getProductId().equals(productId)
+        );
     }
 
-    public Optional<Product> findById(String productID) {
+    public Optional<Product> findById(String productId) {
         return productData.stream()
-                .filter(p -> p.getProductID() != null && p.getProductID().equals(productID))
+                .filter(p -> p.getProductId() != null && p.getProductId().equals(productId))
                 .findFirst();
     }
 
-
-
-    public Product updateFields(String productID, String newName, int newQty) {
-        Product existing = findById(productID)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productID));
+    public Product updateFields(String productId, String newName, int newQty) {
+        Product existing = findById(productId)
+                .orElseThrow(() -> new IllegalArgumentException("Product not found: " + productId));
 
         existing.setProductName(newName);
         existing.setProductQuantity(newQty);

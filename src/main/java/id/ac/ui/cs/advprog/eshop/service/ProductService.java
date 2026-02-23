@@ -7,7 +7,7 @@ import java.util.List;
 public interface ProductService {
     public Product create(Product product);
     public List<Product> findAll();
-    void deleteById(String productID);
-    Product findById(String productID);
-    Product update(String productID, String newName, int newQty);
+    void deleteById(String productId);
+    Product findById(String productId);
+    Product update(String productId, String newName, int newQty);
 }
