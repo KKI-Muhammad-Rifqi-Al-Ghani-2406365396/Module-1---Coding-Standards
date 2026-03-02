@@ -49,18 +49,23 @@ public class ProductController {
     @PostMapping("/edit")
     public String editProductPost(@ModelAttribute Product product, Model model) {
         System.out.println(product.getProductId());
-        service.update(product.getProductId(), product);
+        service.update(product.getProductId(),
+                product.getProductName(),
+                product.getProductQuantity());
         return "redirect:list";
     }
 
     @PostMapping("/delete")
     public String deleteProduct(@RequestParam("productId") String productId) {
-        service.deleteProductById(productId);
+        service.deleteById(productId);
         return "redirect:list";
     }
 }
 
-
+/* =========================================================
+   CarController is intentionally placed in the SAME FILE
+   (ProductController.java), as required by the tutorial.
+   ========================================================= */
 
 @Controller
 @RequestMapping("/car")
