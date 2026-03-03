@@ -38,3 +38,22 @@ While this way its easier to initialize, it introduce a problem
 i supposed it meets the definition of Continuous Integration, every push triggers an automated pipeline that builds the project and runs the test suite.  
 the pipeline includes automated checks like code coverage and PMD analysis.  
 as for Continous Deployement, it still need a manual run from the heroku it partially fill the condition .
+
+
+## Reflection 3
+### 1.
+
+- SRP is implemented by seperating car controller and product controller
+- LSP is implemented by CarController extends ProductController
+- ISP Car and Product Service are small and focused interfaced
+- DIP the Controller depends on the Interface of the service 
+
+### 2.
+- SRP makes easier maintainance and lesser accidental changes
+- LSP removes wrong inheritance and avoid unexpected behaviours
+
+
+### 3. 
+- Without SRP , Files will have comically long lines of code and a single function can do many task 
+- WIthout LSP , There will be behaviour that is not expected for the subclass
+- Without DIP , a high level code that is tied directly to the low level will do unexpected behaviours
