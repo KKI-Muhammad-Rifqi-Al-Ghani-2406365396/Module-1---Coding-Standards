@@ -136,4 +136,45 @@ class PaymentRepositoryTest {
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
+
+    @Test
+    void testSaveNullPaymentShouldThrow() {
+        assertThrows(IllegalArgumentException.class, () -> paymentRepository.save(null));
+    }
+
+    @Test
+    void testFindByIdIfIdNull() {
+        assertNull(paymentRepository.findById(null));
+    }
+
+    @Test
+    void testSaveUpdateShouldNotIncreaseSize() {
+        Payment payment = payments.get(0);
+        paymentRepository.save(payment);
+
+        Map<String, String> newPaymentData = new HashMap<>();
+        newPaymentData.put("voucherCode", "ESHOP1234ABC5678");
+        Payment updatedPayment = new Payment(order, "VOUCHER_CODE", newPaymentData);
+        updatedPayment.setPaymentStatus(PaymentStatus.REJECTED.getValue());
+        updatedPayment.setPaymentId(payment.getPaymentId());
+
+        paymentRepository.save(updatedPayment);
+
+        List<Payment> result = paymentRepository.findAll();
+        assertEquals(1, result.size());
+        assertEquals(payment.getPaymentId(), result.get(0).getPaymentId());
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.get(0).getPaymentStatus());
+    }
+
+    @Test
+    void testFindAllShouldContainSavedPayments() {
+        for (Payment payment : payments) {
+            paymentRepository.save(payment);
+        }
+
+        List<Payment> result = paymentRepository.findAll();
+        assertEquals(2, result.size());
+        assertEquals(payments.get(0).getPaymentId(), result.get(0).getPaymentId());
+        assertEquals(payments.get(1).getPaymentId(), result.get(1).getPaymentId());
+    }
 }
