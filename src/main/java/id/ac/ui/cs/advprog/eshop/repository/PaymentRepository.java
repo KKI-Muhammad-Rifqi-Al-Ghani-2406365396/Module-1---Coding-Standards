@@ -8,25 +8,20 @@ import java.util.List;
 
 @Repository
 public class PaymentRepository {
-    private List<Payment> paymentData = new ArrayList<>();
+    private final List<Payment> paymentData = new ArrayList<>();
 
     public Payment save(Payment payment) {
         if (payment == null || payment.getPaymentId() == null) {
             throw new IllegalArgumentException();
         }
-        if (payment.getPaymentId() == null) {
-            throw new IllegalArgumentException();
+
+        int existingIndex = findPaymentIndexById(payment.getPaymentId());
+        if (existingIndex != -1) {
+            paymentData.set(existingIndex, payment);
+        } else {
+            paymentData.add(payment);
         }
 
-        for (int i = 0; i < paymentData.size(); i++) {
-            Payment savedPayment = paymentData.get(i);
-            if (savedPayment.getPaymentId() != null && savedPayment.getPaymentId().equals(payment.getPaymentId())) {
-                paymentData.set(i, payment);
-                return payment;
-            }
-        }
-
-        paymentData.add(payment);
         return payment;
     }
 
@@ -34,15 +29,21 @@ public class PaymentRepository {
         if (paymentId == null) {
             return null;
         }
-        for (Payment savedPayment : paymentData) {
-            if (savedPayment.getPaymentId() != null && savedPayment.getPaymentId().equals(paymentId)) {
-                return savedPayment;
-            }
-        }
-        return null;
+
+        int index = findPaymentIndexById(paymentId);
+        return index != -1 ? paymentData.get(index) : null;
     }
 
     public List<Payment> findAll() {
         return new ArrayList<>(paymentData);
+    }
+
+    private int findPaymentIndexById(String paymentId) {
+        for (int i = 0; i < paymentData.size(); i++) {
+            if (paymentId.equals(paymentData.get(i).getPaymentId())) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
