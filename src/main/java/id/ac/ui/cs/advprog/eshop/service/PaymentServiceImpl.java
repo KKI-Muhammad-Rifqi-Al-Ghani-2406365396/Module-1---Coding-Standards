@@ -16,6 +16,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
+
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
         Payment payment = new Payment(order, method, paymentData);
@@ -26,33 +27,23 @@ public class PaymentServiceImpl implements PaymentService {
 
         return paymentRepository.save(payment);
     }
-    // Voucher Implementation
-    private void processVoucherPayment(Payment payment) {
-        String voucherCode = payment.getPaymentData().get("voucherCode");
 
-        if (isValidVoucherCode(voucherCode)) {
-            payment.setPaymentStatus(PaymentStatus.SUCCESS.getValue());
-            payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
-        } else {
-            payment.setPaymentStatus(PaymentStatus.REJECTED.getValue());
-            payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
-        }
+    private void processVoucherPayment(Payment payment) {
+        PaymentStatus paymentStatus = isValidVoucherCode(
+                payment.getPaymentData().get("voucherCode"))
+                ? PaymentStatus.SUCCESS : PaymentStatus.REJECTED;
+
+        applyPaymentStatus(payment, paymentStatus);
     }
 
     private boolean isValidVoucherCode(String voucherCode) {
-        if (voucherCode == null) {
-            return false;
-        }
-        if (voucherCode.length() != 16) {
-            return false;
-        }
-        if (!voucherCode.startsWith("ESHOP")) {
+        if (voucherCode == null || voucherCode.length() != 16 || !voucherCode.startsWith("ESHOP")) {
             return false;
         }
 
         int digitCount = 0;
-        for (int i = 0; i < voucherCode.length(); i++) {
-            if (Character.isDigit(voucherCode.charAt(i))) {
+        for (char c : voucherCode.toCharArray()) {
+            if (Character.isDigit(c)) {
                 digitCount++;
             }
         }
@@ -66,7 +57,14 @@ public class PaymentServiceImpl implements PaymentService {
         }
 
         PaymentStatus paymentStatus = parsePaymentStatus(status);
+        applyPaymentStatus(payment, paymentStatus);
+
+        return paymentRepository.save(payment);
+    }
+
+    private void applyPaymentStatus(Payment payment, PaymentStatus paymentStatus) {
         payment.setPaymentStatus(paymentStatus.getValue());
+
         switch (paymentStatus) {
             case SUCCESS -> payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
             case REJECTED -> payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
@@ -74,8 +72,6 @@ public class PaymentServiceImpl implements PaymentService {
                 // do nothing
             }
         }
-
-        return paymentRepository.save(payment);
     }
 
     private static PaymentStatus parsePaymentStatus(String status) {
