@@ -32,13 +32,31 @@ public class PaymentServiceImpl implements PaymentService {
 
         if (isValidVoucherCode(voucherCode)) {
             payment.setPaymentStatus(PaymentStatus.SUCCESS.getValue());
+            payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
         } else {
             payment.setPaymentStatus(PaymentStatus.REJECTED.getValue());
+            payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
         }
     }
 
     private boolean isValidVoucherCode(String voucherCode) {
-        return false;
+        if (voucherCode == null) {
+            return false;
+        }
+        if (voucherCode.length() != 16) {
+            return false;
+        }
+        if (!voucherCode.startsWith("ESHOP")) {
+            return false;
+        }
+
+        int digitCount = 0;
+        for (int i = 0; i < voucherCode.length(); i++) {
+            if (Character.isDigit(voucherCode.charAt(i))) {
+                digitCount++;
+            }
+        }
+        return digitCount == 8;
     }
 
     @Override

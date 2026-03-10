@@ -196,7 +196,7 @@ class PaymentServiceImplTest {
     void testAddPaymentWithVoucherWithout8Digits() {
         Map<String, String> paymentData = new HashMap<>();
         // 16 chars and starts with "ESHOP", but contains only 2 digits
-        paymentData.put("voucherCode", "ESHOPABCDABCDEF12");
+        paymentData.put("voucherCode", "ESHOPABCDABCDE12");
 
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository).save(any(Payment.class));
@@ -212,7 +212,7 @@ class PaymentServiceImplTest {
     void testAddPaymentWithVoucherWith7Digits() {
         Map<String, String> paymentData = new HashMap<>();
         // 16 chars, starts with "ESHOP", but contains 7 digits
-        paymentData.put("voucherCode", "ESHOP123ABC4567DE");
+        paymentData.put("voucherCode", "ESHOP123ABC4567D");
 
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository).save(any(Payment.class));
@@ -228,7 +228,7 @@ class PaymentServiceImplTest {
     void testAddPaymentWithVoucherWith9Digits() {
         Map<String, String> paymentData = new HashMap<>();
         // 16 chars, starts with "ESHOP", but contains 9 digits
-        paymentData.put("voucherCode", "ESHOP12345ABC6789");
+        paymentData.put("voucherCode", "ESHOP12345AB6789");
 
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository).save(any(Payment.class));
@@ -244,7 +244,7 @@ class PaymentServiceImplTest {
     void testAddPaymentWithValidVoucherNonConsecutiveDigits() {
         Map<String, String> paymentData = new HashMap<>();
         // 16 chars, starts with "ESHOP", contains exactly 8 digits (not all consecutive)
-        paymentData.put("voucherCode", "ESHOP12AB34CD5678");
+        paymentData.put("voucherCode", "ESHOP12AB34C5678");
 
         doAnswer(invocation -> invocation.getArgument(0))
                 .when(paymentRepository).save(any(Payment.class));
