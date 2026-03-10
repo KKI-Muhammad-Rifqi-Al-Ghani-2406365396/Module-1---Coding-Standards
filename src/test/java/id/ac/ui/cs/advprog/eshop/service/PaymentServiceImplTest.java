@@ -144,4 +144,130 @@ class PaymentServiceImplTest {
         assertEquals(2, results.size());
         verify(paymentRepository, times(1)).findAll();
     }
+    //Vouchers
+    @Test
+    void testAddPaymentWithValidVoucher() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "ESHOP1234ABC5678");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals("VOUCHER_CODE", result.getPaymentMethod());
+        assertEquals(PaymentStatus.SUCCESS.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithInvalidVoucherLength() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("voucherCode", "ESHOP123");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithInvalidVoucherPrefix() {
+        Map<String, String> paymentData = new HashMap<>();
+        // 16 chars, but does not start with "ESHOP"
+        paymentData.put("voucherCode", "SHOP1234ABC5678X");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithVoucherWithout8Digits() {
+        Map<String, String> paymentData = new HashMap<>();
+        // 16 chars and starts with "ESHOP", but contains only 2 digits
+        paymentData.put("voucherCode", "ESHOPABCDABCDEF12");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithVoucherWith7Digits() {
+        Map<String, String> paymentData = new HashMap<>();
+        // 16 chars, starts with "ESHOP", but contains 7 digits
+        paymentData.put("voucherCode", "ESHOP123ABC4567DE");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithVoucherWith9Digits() {
+        Map<String, String> paymentData = new HashMap<>();
+        // 16 chars, starts with "ESHOP", but contains 9 digits
+        paymentData.put("voucherCode", "ESHOP12345ABC6789");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithValidVoucherNonConsecutiveDigits() {
+        Map<String, String> paymentData = new HashMap<>();
+        // 16 chars, starts with "ESHOP", contains exactly 8 digits (not all consecutive)
+        paymentData.put("voucherCode", "ESHOP12AB34CD5678");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.SUCCESS.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
+    @Test
+    void testAddPaymentWithMissingVoucherCodeKey() {
+        Map<String, String> paymentData = new HashMap<>();
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "VOUCHER_CODE", paymentData);
+
+        assertNotNull(result);
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        verify(paymentRepository, times(1)).save(any(Payment.class));
+    }
+
 }

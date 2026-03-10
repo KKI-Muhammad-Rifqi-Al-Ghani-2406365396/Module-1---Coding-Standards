@@ -16,11 +16,29 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Autowired
     private PaymentRepository paymentRepository;
-
     @Override
     public Payment addPayment(Order order, String method, Map<String, String> paymentData) {
         Payment payment = new Payment(order, method, paymentData);
+
+        if ("VOUCHER_CODE".equals(method)) {
+            processVoucherPayment(payment);
+        }
+
         return paymentRepository.save(payment);
+    }
+    // Voucher Implementation
+    private void processVoucherPayment(Payment payment) {
+        String voucherCode = payment.getPaymentData().get("voucherCode");
+
+        if (isValidVoucherCode(voucherCode)) {
+            payment.setPaymentStatus(PaymentStatus.SUCCESS.getValue());
+        } else {
+            payment.setPaymentStatus(PaymentStatus.REJECTED.getValue());
+        }
+    }
+
+    private boolean isValidVoucherCode(String voucherCode) {
+        return false;
     }
 
     @Override
