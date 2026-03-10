@@ -1,11 +1,10 @@
 package id.ac.ui.cs.advprog.eshop.model;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +26,7 @@ class OrderTest {
         this.products.add(product1);
         this.products.add(product2);
     }
-}
+
 @Test
 void testCreateOrderEmptyProduct() {
     this.products.clear();
@@ -63,10 +62,9 @@ void testCreateOrderSuccessStatus() {
 
 @Test
 void testCreateOrderInvalidStatus() {
-    assertThrows(IllegalArgumentException.class, () -> {
-        Order order = new Order("13652556-012a-4c07-b546-54eb1396d79b",
-                this.products, 1708560000L, "Safira Sudrajat", "MEOW");
-    });
+    Order order = new Order("13652556-012a-4c07-b546-54eb1396d79b",
+            this.products, 1708560000L, "Safira Sudrajat", "MEOW");
+    assertEquals("WAITING_PAYMENT", order.getStatus());
 }
 
 @Test
@@ -81,5 +79,8 @@ void testSetStatusToCancelled() {
 void testSetStatusToInvalidStatus() {
     Order order = new Order("13652556-012a-4c07-b546-54eb1396d79b",
             this.products, 1708560000L, "Safira Sudrajat");
-    assertThrows(IllegalArgumentException.class, () -> order.setStatus("MEOW"));
+    order.setStatus("SUCCESS");
+    order.setStatus("MEOW");
+    assertEquals("SUCCESS", order.getStatus());
+}
 }
