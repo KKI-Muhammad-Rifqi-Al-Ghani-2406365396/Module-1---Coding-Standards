@@ -23,11 +23,13 @@ public class PaymentServiceImpl implements PaymentService {
 
         if ("VOUCHER_CODE".equals(method)) {
             processVoucherPayment(payment);
+        } else if ("BANK_TRANSFER".equals(method)) {
+            processBankTransferPayment(payment);
         }
 
         return paymentRepository.save(payment);
     }
-
+    // Vouchers
     private void processVoucherPayment(Payment payment) {
         PaymentStatus paymentStatus = isValidVoucherCode(
                 payment.getPaymentData().get("voucherCode"))
@@ -48,6 +50,11 @@ public class PaymentServiceImpl implements PaymentService {
             }
         }
         return digitCount == 8;
+    }
+    // Bank Transfers
+    private void processBankTransferPayment(Payment payment) {}
+    private boolean isValidBankTransfer(String bankName, String referenceCode) {
+        return false;
     }
 
     @Override
