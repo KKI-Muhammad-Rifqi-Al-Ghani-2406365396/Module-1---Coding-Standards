@@ -25,15 +25,33 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public Payment setStatus(Payment payment, String status) {
-        payment.setPaymentStatus(status);
+        if (payment == null) {
+            throw new IllegalArgumentException();
+        }
 
-        if (PaymentStatus.SUCCESS.getValue().equals(status)) {
-            payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
-        } else if (PaymentStatus.REJECTED.getValue().equals(status)) {
-            payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
+        PaymentStatus paymentStatus = parsePaymentStatus(status);
+        payment.setPaymentStatus(paymentStatus.getValue());
+        switch (paymentStatus) {
+            case SUCCESS -> payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
+            case REJECTED -> payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
+            case WAITING_PAYMENT -> {
+                // do nothing
+            }
         }
 
         return paymentRepository.save(payment);
+    }
+
+    private static PaymentStatus parsePaymentStatus(String status) {
+        if (status == null) {
+            throw new IllegalArgumentException();
+        }
+        for (PaymentStatus s : PaymentStatus.values()) {
+            if (s.getValue().equals(status)) {
+                return s;
+            }
+        }
+        throw new IllegalArgumentException();
     }
 
     @Override
