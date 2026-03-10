@@ -56,14 +56,11 @@ public class PaymentServiceImpl implements PaymentService {
         String bankName = payment.getPaymentData().get("bankName");
         String referenceCode = payment.getPaymentData().get("referenceCode");
 
-        if (bankName != null && !bankName.isEmpty()
-                && referenceCode != null && !referenceCode.isEmpty()) {
-            payment.setPaymentStatus(PaymentStatus.SUCCESS.getValue());
-            payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
-        } else {
-            payment.setPaymentStatus(PaymentStatus.REJECTED.getValue());
-            payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
-        }
+        PaymentStatus paymentStatus = isValidBankTransfer(bankName, referenceCode)
+                ? PaymentStatus.SUCCESS
+                : PaymentStatus.REJECTED;
+
+        applyPaymentStatus(payment, paymentStatus);
     }
     private boolean isValidBankTransfer(String bankName, String referenceCode) {
         return bankName != null && !bankName.trim().isEmpty()
