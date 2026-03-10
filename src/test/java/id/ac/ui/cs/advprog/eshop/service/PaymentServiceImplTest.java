@@ -361,4 +361,36 @@ class PaymentServiceImplTest {
         assertEquals(OrderStatus.FAILED.getValue(), result.getOrder().getStatus());
         verify(paymentRepository, times(1)).save(any(Payment.class));
     }
+
+    @Test
+    void testAddPaymentWithBlankBankName() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("bankName", "   ");
+        paymentData.put("referenceCode", "TRF-001");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "BANK_TRANSFER", paymentData);
+
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        assertEquals(OrderStatus.FAILED.getValue(), result.getOrder().getStatus());
+    }
+
+    @Test
+    void testAddPaymentWithBlankReferenceCode() {
+        Map<String, String> paymentData = new HashMap<>();
+        paymentData.put("bankName", "BCA");
+        paymentData.put("referenceCode", "   ");
+
+        doAnswer(invocation -> invocation.getArgument(0))
+                .when(paymentRepository).save(any(Payment.class));
+
+        Payment result = paymentService.addPayment(order, "BANK_TRANSFER", paymentData);
+
+        assertEquals(PaymentStatus.REJECTED.getValue(), result.getPaymentStatus());
+        assertEquals(OrderStatus.FAILED.getValue(), result.getOrder().getStatus());
+    }
+
+    
 }
