@@ -57,3 +57,21 @@ as for Continous Deployement, it still need a manual run from the heroku it part
 - Without SRP , Files will have comically long lines of code and a single function can do many task 
 - WIthout LSP , There will be behaviour that is not expected for the subclass
 - Without DIP , a high level code that is tied directly to the low level will do unexpected behaviours
+
+
+## Reflection 4
+
+## 1.
+- In the red phase, I first write tests based on requirements. This forces me to understand what the system is supposed to do before writing implementation.
+- In the green phase, I only write enough code to make the tests pass. This helps me avoid overengineering.
+- In the refactor phase, I improve the design after behavior is already protected by tests. For example, replacing hardcoded status strings with OrderStatus enum makes the code cleaner and easier to maintain.
+
+
+So yes it is Pretty Useful
+
+## 2.
+- Fast , yes most test run are near instant
+- Independent, mostly yes. some tests reuse shared setup structures like orders and products.
+- Repeatable, Yes. They all should produce the exact same value on each test run 
+- Self Validating, Yes, the Usage of AsserEquals/AssertNull/AssertTrue it will check by its self without manual checking
+- Timely, Yes,The tests were written before or alongside implementation in the TDD cycle
