@@ -392,5 +392,5 @@ class PaymentServiceImplTest {
         assertEquals(OrderStatus.FAILED.getValue(), result.getOrder().getStatus());
     }
 
-    
+
 }

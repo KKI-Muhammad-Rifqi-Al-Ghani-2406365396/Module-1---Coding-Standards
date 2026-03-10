@@ -52,9 +52,22 @@ public class PaymentServiceImpl implements PaymentService {
         return digitCount == 8;
     }
     // Bank Transfers
-    private void processBankTransferPayment(Payment payment) {}
+    private void processBankTransferPayment(Payment payment) {
+        String bankName = payment.getPaymentData().get("bankName");
+        String referenceCode = payment.getPaymentData().get("referenceCode");
+
+        if (bankName != null && !bankName.isEmpty()
+                && referenceCode != null && !referenceCode.isEmpty()) {
+            payment.setPaymentStatus(PaymentStatus.SUCCESS.getValue());
+            payment.getOrder().setStatus(OrderStatus.SUCCESS.getValue());
+        } else {
+            payment.setPaymentStatus(PaymentStatus.REJECTED.getValue());
+            payment.getOrder().setStatus(OrderStatus.FAILED.getValue());
+        }
+    }
     private boolean isValidBankTransfer(String bankName, String referenceCode) {
-        return false;
+        return bankName != null && !bankName.trim().isEmpty()
+                && referenceCode != null && !referenceCode.trim().isEmpty();
     }
 
     @Override
